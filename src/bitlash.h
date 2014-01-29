@@ -36,15 +36,10 @@
 #ifndef _BITLASH_H
 #define _BITLASH_H
 
-#if defined(HIGH) || defined(ARDUINO)		// this detects the Arduino build environment
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
-	#define prog_char char PROGMEM
-	#define prog_uchar char PROGMEM
-#else
-	#include "WProgram.h"
-	#include "WConstants.h"
-#endif
+#if defined(ARDUINO)		// this detects the Arduino build environment
+#include "Arduino.h"
+#define prog_char char PROGMEM
+#define prog_uchar char PROGMEM
 #endif // HIGH || ARDUINO
 
 #if !defined(UNIX_BUILD)
@@ -90,30 +85,14 @@
 //
 ////////////////////////////////////////////////////
 //
-#if defined(HIGH) || defined(ARDUINO)		// this detects the Arduino build environment
+#if defined(ARDUINO)		// this detects the Arduino build environment
 
 #define ARDUINO_BUILD 1
 
-//#define ARDUINO_VERSION 14	// working
-//#define ARDUINO_VERSION 15 	// working
-#define ARDUINO_VERSION 16		// working, released
-
-// the serial support, she is changing all the time
-#if ARDUINO_VERSION >= 15
 #define beginSerial Serial.begin
 #define serialAvailable Serial.available
 #define serialRead Serial.read
-
-#if defined(ARDUINO) && ARDUINO >= 100
-	#define serialWrite Serial.write
-#else
-	#define serialWrite Serial.print
-#endif
-
-#endif
-
-// Arduino version: 11 - enable by hand if needed; see bitlash-serial.h
-//#define ARDUINO_VERSION 11
+#define serialWrite Serial.write
 
 // Enable Software Serial tx support for Arduino
 // this enables "setbaud(4, 4800); print #4:..."
