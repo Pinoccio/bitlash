@@ -238,11 +238,10 @@ void chkbreak(void) {
 
 // check serial input stream for ^C break
 void chkbreak(void) {
-	if (blconsole->available()) {		// allow ^C to break out
-		if (blconsole->read() == 3) {	// BUG: this gobblesnarfs input characters! - need serialPeek()
-			msgpl(M_ctrlc);
-			longjmp(env, X_EXIT);
-		}
+	if (blconsole->peek() == 3) { // allow ^C to break out
+		blconsole->read();
+		msgpl(M_ctrlc);
+		longjmp(env, X_EXIT);
 	}
 	if (func_free() < MINIMUM_FREE_RAM) overflow(M_stack);
 }
