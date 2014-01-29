@@ -179,10 +179,10 @@ void resetOutputHandler(void) {
 // this is a pinchpoint on output.  all output funnels through spb.
 //
 void spb(char c) {
-	blout->write(c);
+	blout->write((uint8_t)c);
 }
 
-void sp(const char *str) { blout->print(str); }
+void sp(const char *str) { blout->write(str); }
 void speol(void) { blout->println(); }
 
 
