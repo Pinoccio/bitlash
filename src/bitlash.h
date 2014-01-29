@@ -89,24 +89,30 @@
 
 #define ARDUINO_BUILD 1
 
-#define beginSerial Serial.begin
-#define serialAvailable Serial.available
-#define serialRead Serial.read
-#define serialWrite Serial.write
+#ifdef SERIAL_PORT_MONITOR
+#define DEFAULT_CONSOLE SERIAL_PORT_MONITOR
+#else
+// Support 1.0.5 and below and 1.5.4 and below, that don't have
+// SERIAL_PORT_MONITOR defined
+#define DEFAULT_CONSOLE Serial
+#endif
+
+// Assume DEFAULT_CONSOLE lives at pin 0 (Arduino headers don't have
+// any way of finding out). Might be undef'd or redefined below.
+#define DEFAULT_OUTPIN 0
 
 // Enable Software Serial tx support for Arduino
 // this enables "setbaud(4, 4800); print #4:..."
 // at a cost of about 400 bytes (for tx only)
 //
 #define SOFTWARE_SERIAL_TX 1
-#define HARDWARE_SERIAL_TX 1
 
 #define MINIMUM_FREE_RAM 50
 
 #else
 #define HIGH 1
 #define LOW 0
-#endif		// HIGH: arduino build
+#endif // Arduino build
 
 
 ///////////////////////////////////////////////////////
@@ -121,18 +127,6 @@
 #if defined(__AVR_ATmega644P__)
 #define SANGUINO
 
-//void beginSerial(unsigned long baud) { Serial.begin(baud); }
-//char serialAvailable(void) { return Serial.available(); }
-//char serialRead(void) { return Serial.read(); }
-//void serialWrite(char c) { return Serial.print(c); }
-
-#ifndef beginSerial
-#define beginSerial Serial.begin
-#define serialAvailable Serial.available
-#define serialRead Serial.read
-#define serialWrite Serial.print
-#endif
-
 // Sanguino has 24 digital and 8 analog io pins
 #define NUMPINS (24+8)
 
@@ -140,6 +134,7 @@
 // Sanguino alternate hardware serial port tx output is on pin 11 (rx on 10)
 #define SANGUINO_DEFAULT_SERIAL 9
 #define SANGUINO_ALTERNATE_SERIAL 11
+#undef DEFAULT_OUTPIN
 #define DEFAULT_OUTPIN SANGUINO_DEFAULT_SERIAL
 #define ALTERNATE_OUTPIN SANGUINO_ALTERNATE_SERIAL
 
@@ -159,13 +154,6 @@
 //
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 #define MEGA 1
-#endif
-
-#if defined(MEGA)
-#define beginSerial Serial.begin
-#define serialAvailable Serial.available
-#define serialRead Serial.read
-#define serialWrite Serial.print
 
 // MEGA has 54 digital and 16 analog pins
 #define NUMPINS (54+16)
@@ -176,17 +164,13 @@
 //
 #define MEGA_DEFAULT_SERIAL 1
 #define MEGA_ALTERNATE_SERIAL 18
+#undef DEFAULT_OUTPIN
 #define DEFAULT_OUTPIN MEGA_DEFAULT_SERIAL
 #define ALTERNATE_OUTPIN MEGA_ALTERNATE_SERIAL
 
 #endif	// defined (1280)
 
 #if defined(__AVR_ATmega64__)
-
-#define beginSerial Serial1.begin
-#define serialAvailable Serial1.available
-#define serialRead Serial1.read
-#define serialWrite Serial1.print
 
 #define NUMPINS (53)
 #endif
@@ -202,12 +186,7 @@
 #undef MINIMUM_FREE_RAM
 #define MINIMUM_FREE_RAM 20
 #define NUMPINS 6
-//#undef HARDWARE_SERIAL_TX
 #undef SOFTWARE_SERIAL_TX
-//#define SOFTWARE_SERIAL_TX 1
-
-//#include "usbdrv.h"
-
 #endif		// TINY_BUILD
 
 
@@ -228,13 +207,9 @@
 #if defined(AVROPENDOUS_BUILD)
 #define MINIMUM_FREE_RAM 20
 #define NUMPINS 24
-#undef HARDWARE_SERIAL_TX
 #undef SOFTWARE_SERIAL_TX
-void beginSerial(unsigned long baud) { ; }
-#define serialAvailable usbAvailable
-#define serialRead usbRead
-#define serialWrite usbWrite
-#include <util/delay.h>
+// Serial is virtual (USB), so no corresponding pin
+#undef DEFAULT_OUTPIN
 #endif	// defined AVRO
 
 #define TEENSY
@@ -254,13 +229,9 @@ void beginSerial(unsigned long baud) { ; }
 #if defined(AVROPENDOUS_BUILD)
 #define MINIMUM_FREE_RAM 50
 #define NUMPINS 40
-#undef HARDWARE_SERIAL_TX
 #undef SOFTWARE_SERIAL_TX
-void beginSerial(unsigned long baud) { ; }
-#define serialAvailable usbAvailable
-#define serialRead usbRead
-#define serialWrite usbWrite
-#include <util/delay.h>
+// Serial is virtual (USB), so no corresponding pin
+#undef DEFAULT_OUTPIN
 #endif	// AVRO
 
 #define TEENSY2
@@ -363,6 +334,7 @@ void connectBitlash(void);
 // bitlash-api.c
 //
 void initBitlash(unsigned long baud);	// start up and set baud rate
+void initBitlash(Stream& stream);
 void runBitlash(void);					// call this in loop(), frequently
 numvar doCommand(const char *);					// execute a command from your sketch
 void doCharacter(char);					// pass an input character to the line editor
@@ -496,6 +468,7 @@ void resetOutput(void);
 typedef void (*serialOutputFunc)(byte);
 byte serialIsOverridden(void);
 void setOutputHandler(serialOutputFunc);
+void setOutputHandler(Print& newHandler);
 void resetOutputHandler(void);
 extern serialOutputFunc serial_override_handler;
 #endif
@@ -505,6 +478,18 @@ void chkbreak(void);
 void cmd_print(void);
 #endif
 numvar func_printf_handler(byte, byte);
+
+
+// The Stream where input is read from and print writes to when there is
+// not output handler set.
+extern Stream *blconsole;
+
+// The Print object where the print command normally goes (e.g. when not
+// redirected with print #10: "foo")
+extern Print *bloutdefault;
+
+// The Print object where the print command goes right now
+extern Print *blout;
 
 
 /////////////////////////////////////////////
