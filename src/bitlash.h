@@ -91,10 +91,7 @@
 
 #define ARDUINO_BUILD 1
 
-#define beginSerial Serial.begin
-#define serialAvailable Serial.available
-#define serialRead Serial.read
-#define serialWrite Serial.write
+#define DEFAULT_CONSOLE SERIAL_PORT_MONITOR
 
 // Enable Software Serial tx support for Arduino
 // this enables "setbaud(4, 4800); print #4:..."
@@ -106,9 +103,10 @@
 #define MINIMUM_FREE_RAM 50
 
 #else
+// TODO: More non-Arduino stuff
 #define HIGH 1
 #define LOW 0
-#endif		// HIGH: arduino build
+#endif // Arduino build
 
 
 ///////////////////////////////////////////////////////
@@ -122,18 +120,6 @@
 //
 #if defined(__AVR_ATmega644P__)
 #define SANGUINO
-
-//void beginSerial(unsigned long baud) { Serial.begin(baud); }
-//char serialAvailable(void) { return Serial.available(); }
-//char serialRead(void) { return Serial.read(); }
-//void serialWrite(char c) { return Serial.print(c); }
-
-#ifndef beginSerial
-#define beginSerial Serial.begin
-#define serialAvailable Serial.available
-#define serialRead Serial.read
-#define serialWrite Serial.print
-#endif
 
 // Sanguino has 24 digital and 8 analog io pins
 #define NUMPINS (24+8)
@@ -161,13 +147,6 @@
 //
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 #define MEGA 1
-#endif
-
-#if defined(MEGA)
-#define beginSerial Serial.begin
-#define serialAvailable Serial.available
-#define serialRead Serial.read
-#define serialWrite Serial.print
 
 // MEGA has 54 digital and 16 analog pins
 #define NUMPINS (54+16)
@@ -185,11 +164,6 @@
 
 #if defined(__AVR_ATmega64__)
 
-#define beginSerial Serial1.begin
-#define serialAvailable Serial1.available
-#define serialRead Serial1.read
-#define serialWrite Serial1.print
-
 #define NUMPINS (53)
 #endif
 
@@ -204,12 +178,7 @@
 #undef MINIMUM_FREE_RAM
 #define MINIMUM_FREE_RAM 20
 #define NUMPINS 6
-//#undef HARDWARE_SERIAL_TX
 #undef SOFTWARE_SERIAL_TX
-//#define SOFTWARE_SERIAL_TX 1
-
-//#include "usbdrv.h"
-
 #endif		// TINY_BUILD
 
 
@@ -464,6 +433,18 @@ void chkbreak(void);
 void cmd_print(void);
 #endif
 numvar func_printf_handler(byte, byte);
+
+
+// The Print object where the print command goes right now
+Print *blout;
+
+// The Print object where the print command normally goes (e.g. when not
+// redirected with print #10: "foo"
+Print *bloutdefault;
+
+// The Stream where input is read from and print writes to when there is
+// not output handler set.
+Stream *blconsole;
 
 
 /////////////////////////////////////////////

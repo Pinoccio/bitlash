@@ -50,13 +50,10 @@ numvar doCommand(const char *cmd) {
 }
 
 
-void initBitlash(unsigned long baud) {
-
-#if defined(TINY_BUILD)
-	beginSerial(9600);
-#else
-	beginSerial(baud);
-#endif
+void initBitlash(Stream& stream) {
+	blconsole = &stream;
+	if (!bloutdefault)
+		blout = bloutdefault = &stream;
 
 #if defined(ARM_BUILD)
 	eeinit();
@@ -76,3 +73,10 @@ void initBitlash(unsigned long baud) {
 	initlbuf();
 }
 
+void initBitlash(unsigned long baud) {
+	#if defined(TINY_BUILD)
+	baud = 9600;
+	#endif
+	DEFAULT_CONSOLE.begin(baud);
+	initBitlash(DEFAULT_CONSOLE);
+}
