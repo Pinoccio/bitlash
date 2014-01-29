@@ -105,9 +105,7 @@ numvar setBaud(numvar pin, unumvar baud) {
 	}
 #endif
 
-	Serial.println(baud);
 	sstx.bittime[pin] = (1000000/baud) - clockCyclesToMicroseconds(50);
-	Serial.println(sstx.bittime[pin]);
 	pinMode(pin, OUTPUT);				// make it an output
 	digitalWrite(pin, HIGH);				// set idle
 	delayMicroseconds(sstx.bittime[pin]);		// let it quiesce
