@@ -435,16 +435,16 @@ void cmd_print(void);
 numvar func_printf_handler(byte, byte);
 
 
-// The Print object where the print command goes right now
-Print *blout;
-
-// The Print object where the print command normally goes (e.g. when not
-// redirected with print #10: "foo"
-Print *bloutdefault;
-
 // The Stream where input is read from and print writes to when there is
 // not output handler set.
 Stream *blconsole;
+
+// The Print object where the print command normally goes (e.g. when not
+// redirected with print #10: "foo")
+Print *bloutdefault;
+
+// The Print object where the print command goes right now
+Print *blout;
 
 
 /////////////////////////////////////////////
