@@ -37,9 +37,10 @@
 #define _BITLASH_H
 
 #if defined(ARDUINO)		// this detects the Arduino build environment
+// On newer gcc versions, this enabled the prog_char etc. types
+#define __PROG_TYPES_COMPAT__
+
 #include "Arduino.h"
-#define prog_char char PROGMEM
-#define prog_uchar char PROGMEM
 #endif // HIGH || ARDUINO
 
 #if !defined(UNIX_BUILD)
