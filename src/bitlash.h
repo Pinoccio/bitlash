@@ -55,13 +55,6 @@
 #endif
 #endif // !defined(UNIX_BUILD)
 
-
-#if defined(AVR_BUILD)
-#include "avr/io.h"
-#include "avr/pgmspace.h"
-#include "avr/interrupt.h"
-#endif
-
 #include <string.h>
 #include <ctype.h>
 #include <setjmp.h>
