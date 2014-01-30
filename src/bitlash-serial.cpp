@@ -146,7 +146,7 @@ serialOutputFunc serial_override_handler;
 
 class PrintToFunction : public Print {
 public:
-	serialOutputFunc func = NULL;
+	serialOutputFunc func;
 	virtual size_t write(uint8_t c) { func (c); return 1; }
 };
 
