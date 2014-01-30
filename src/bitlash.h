@@ -94,7 +94,13 @@
 
 #define ARDUINO_BUILD 1
 
+#ifdef SERIAL_PORT_MONITOR
 #define DEFAULT_CONSOLE SERIAL_PORT_MONITOR
+#else
+// Support 1.0.5 and below and 1.5.4 and below, that don't have
+// SERIAL_PORT_MONITOR defined
+#define DEFAULT_CONSOLE Serial
+#endif
 
 // Enable Software Serial tx support for Arduino
 // this enables "setbaud(4, 4800); print #4:..."
