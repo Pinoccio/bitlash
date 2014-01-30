@@ -112,7 +112,6 @@
 #define MINIMUM_FREE_RAM 50
 
 #else
-// TODO: More non-Arduino stuff
 #define HIGH 1
 #define LOW 0
 #endif // Arduino build
