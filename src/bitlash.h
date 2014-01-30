@@ -270,6 +270,7 @@ typedef unsigned int unumvar;
 // bitlash-api.c
 //
 void initBitlash(unsigned long baud);	// start up and set baud rate
+void initBitlash(Stream& stream);
 void runBitlash(void);					// call this in loop(), frequently
 numvar doCommand(const char *);					// execute a command from your sketch
 void doCharacter(char);					// pass an input character to the line editor
@@ -424,6 +425,7 @@ void resetOutput(void);
 typedef void (*serialOutputFunc)(byte);
 byte serialIsOverridden(void);
 void setOutputHandler(serialOutputFunc);
+void setOutputHandler(Print& newHandler);
 void resetOutputHandler(void);
 extern serialOutputFunc serial_override_handler;
 #endif
