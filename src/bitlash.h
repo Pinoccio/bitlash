@@ -77,6 +77,9 @@
 // cost: ~400 bytes flash
 //#define PARSER_TRACE 1
 
+// Define this to disable the initBitlash(Stream*) function and have the
+// console I/O fixed to DEFAULT_CONSOLE.
+//#define DEFAULT_CONSOLE_ONLY
 
 
 ////////////////////////////////////////////////////
@@ -334,7 +337,9 @@ void connectBitlash(void);
 // bitlash-api.c
 //
 void initBitlash(unsigned long baud);	// start up and set baud rate
+#ifndef DEFAULT_CONSOLE_ONLY
 void initBitlash(Stream& stream);
+#endif
 void runBitlash(void);					// call this in loop(), frequently
 numvar doCommand(const char *);					// execute a command from your sketch
 void doCharacter(char);					// pass an input character to the line editor
@@ -482,7 +487,15 @@ numvar func_printf_handler(byte, byte);
 
 // The Stream where input is read from and print writes to when there is
 // not output handler set.
+#ifndef DEFAULT_CONSOLE_ONLY
 extern Stream *blconsole;
+#else
+// Console is fixed to DEFAULT_CONSOLE, so make blconsole a unchangeable
+// pointer to DEFAULT_CONSOLE. By also copying the type of
+// DEFAULT_CONSOLE, the compiler can optimize away all vtable operations
+// for minimal code overhead
+__typeof__(DEFAULT_CONSOLE) * const blconsole = &DEFAULT_CONSOLE;
+#endif
 
 // The Print object where the print command normally goes (e.g. when not
 // redirected with print #10: "foo")
