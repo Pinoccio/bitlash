@@ -441,8 +441,21 @@ void cmd_print(void);
 #endif
 numvar func_printf_handler(byte, byte);
 
-// The Stream where input is read from and print writes to when there is
-// not output handler set.
+// Below, various pointers are defined that tell the code where to read
+// data from and print to.
+// The actual definitions are fairly complex to help the compiler
+// optimize the code when some features are disabled, but the basic
+// function of these variables is:
+//
+// blconsole:
+//   The Stream where input is read from and print writes to
+//   when there is not output handler set.
+// bloutdefault:
+//   The Print object where the print command normally goes (e.g. when not
+//   redirected with print #10: "foo")
+// blout:
+//   The Print object where the print command goes right now
+
 #ifndef DEFAULT_CONSOLE_ONLY
 Stream *blconsole = &DEFAULT_CONSOLE;
 #else
@@ -453,13 +466,46 @@ Stream *blconsole = &DEFAULT_CONSOLE;
 __typeof__(DEFAULT_CONSOLE) * const blconsole = &DEFAULT_CONSOLE;
 #endif
 
-// The Print object where the print command normally goes (e.g. when not
-// redirected with print #10: "foo")
-Print *bloutdefault;
+#if !defined(SERIAL_OVERRIDE) && !defined(SOFTWARE_SERIAL_TX) && defined(DEFAULT_CONSOLE_ONLY)
+// Special case: If there is no way to change the print target nor the
+// console, printing should always just happen to the DEFAULT_CONSOLE
+// object. Since the compiler knows about that dynamic type of
+// DEFAULT_CONSOLE, it should be able to generate direct method calls,
+// skipping any vtable lookups. However, it seems the compiler isn't
+// smart enough to figure this out when calling a method on a reference
+// to a const pointer to a fixed object (e.g. the blout -> bloutdefault
+// -> blconsole reference chain below).
+//
+// To help the compiler, we just define both blout and bloutdefault in
+// the same way, with the same value as blconsole itself.
+__typeof__(blconsole) bloutdefault = blconsole;
+__typeof__(blconsole) blout = blconsole;
+#else // !defined(SERIAL_OVERRIDE) && !defined(SOFTWARE_SERIAL_TX) && defined(DEFAULT_CONSOLE_ONLY)
 
-// The Print object where the print command goes right now
-Print *blout;
+#ifdef SERIAL_OVERRIDE
+Print *bloutdefault = blconsole;
+#else
+// SERIAL_OVERRIDE is disabled, so print redirection should always just
+// reset blout to blconsole. For this, we make bldefault a reference to
+// blconsole, so that they're effectively the same variable.
+// Again, copy the type to allow optimization
+__typeof__(blconsole) & bloutdefault = blconsole;
+#endif
 
+#ifdef SOFTWARE_SERIAL_TX
+Print *blout = blconsole;
+#else
+// SOFTWARE_SERIAL_TX is disabled, so printing should always just go to
+// bloutdefault.  For this, we make blout a reference to bloutdefault,
+// so that they're effectively the same variable.
+// Again, copy the type to allow optimization
+__typeof__(bloutdefault) & blout = bloutdefault;
+#endif
+
+// Note that if SOFTWARE_SERIAL_TX and SERIAL_OVERRIDE are disabled,
+// then blconsole, bloutdefault and blout are all effectively the same
+// variable.
+#endif  // !defined(SERIAL_OVERRIDE) && !defined(SOFTWARE_SERIAL_TX) && defined(DEFAULT_CONSOLE_ONLY)
 
 /////////////////////////////////////////////
 // bitlash-taskmgr.c
