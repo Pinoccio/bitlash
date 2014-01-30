@@ -36,7 +36,7 @@
 #ifndef _BITLASH_H
 #define _BITLASH_H
 
-#if defined(HIGH) || defined(ARDUINO)		// this detects the Arduino build environment
+#if defined(ARDUINO)		// this detects the Arduino build environment
 #include "Arduino.h"
 #define prog_char char PROGMEM
 #define prog_uchar char PROGMEM
@@ -90,7 +90,7 @@
 //
 ////////////////////////////////////////////////////
 //
-#if defined(HIGH) || defined(ARDUINO)		// this detects the Arduino build environment
+#if defined(ARDUINO)		// this detects the Arduino build environment
 
 #define ARDUINO_BUILD 1
 
