@@ -182,8 +182,8 @@ void spb(char c) {
 	blout->write((uint8_t)c);
 }
 
-void sp(const char *str) { blout->write(str); }
-void speol(void) { blout->println(); }
+void sp(const char *str) { while (*str) spb(*str++); }
+void speol(void) { spb(13); spb(10); }
 
 
 void printIntegerInBase(unumvar n, uint8_t base, numvar width, byte pad) {
