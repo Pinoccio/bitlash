@@ -101,7 +101,6 @@
 // at a cost of about 400 bytes (for tx only)
 //
 #define SOFTWARE_SERIAL_TX 1
-#define HARDWARE_SERIAL_TX 1
 
 #define MINIMUM_FREE_RAM 50
 
@@ -201,7 +200,6 @@
 #if defined(AVROPENDOUS_BUILD)
 #define MINIMUM_FREE_RAM 20
 #define NUMPINS 24
-#undef HARDWARE_SERIAL_TX
 #undef SOFTWARE_SERIAL_TX
 #endif	// defined AVRO
 
@@ -222,7 +220,6 @@
 #if defined(AVROPENDOUS_BUILD)
 #define MINIMUM_FREE_RAM 50
 #define NUMPINS 40
-#undef HARDWARE_SERIAL_TX
 #undef SOFTWARE_SERIAL_TX
 #endif	// AVRO
 
@@ -250,7 +247,6 @@
 #ifdef UNIX_BUILD
 #define MINIMUM_FREE_RAM 200
 #define NUMPINS 32
-#undef HARDWARE_SERIAL_TX
 #undef SOFTWARE_SERIAL_TX
 #define beginSerial(x)
 
