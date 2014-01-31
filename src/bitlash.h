@@ -203,11 +203,6 @@
 #define NUMPINS 24
 #undef HARDWARE_SERIAL_TX
 #undef SOFTWARE_SERIAL_TX
-void beginSerial(unsigned long baud) { ; }
-#define serialAvailable usbAvailable
-#define serialRead usbRead
-#define serialWrite usbWrite
-#include <util/delay.h>
 #endif	// defined AVRO
 
 #define TEENSY
@@ -229,11 +224,6 @@ void beginSerial(unsigned long baud) { ; }
 #define NUMPINS 40
 #undef HARDWARE_SERIAL_TX
 #undef SOFTWARE_SERIAL_TX
-void beginSerial(unsigned long baud) { ; }
-#define serialAvailable usbAvailable
-#define serialRead usbRead
-#define serialWrite usbWrite
-#include <util/delay.h>
 #endif	// AVRO
 
 #define TEENSY2
