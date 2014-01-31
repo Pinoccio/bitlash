@@ -35,6 +35,18 @@
 ***/
 #include "bitlash.h"
 
+#ifndef DEFAULT_CONSOLE_ONLY
+Stream *blconsole = &DEFAULT_CONSOLE;
+#endif
+
+#ifdef SERIAL_OVERRIDE
+Print *bloutdefault = blconsole;
+#endif
+
+#ifdef SOFTWARE_SERIAL_TX
+Print *blout = blconsole;
+#endif
+
 #ifdef SOFTWARE_SERIAL_TX
 
 #define DEFAULT_SECONDARY_BAUD 9600L
