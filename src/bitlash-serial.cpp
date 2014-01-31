@@ -35,10 +35,6 @@
 ***/
 #include "bitlash.h"
 
-
-// Character io primitives
-//#define spb serialWrite
-
 #ifdef SOFTWARE_SERIAL_TX
 
 #define DEFAULT_SECONDARY_BAUD 9600L
