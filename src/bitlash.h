@@ -96,6 +96,10 @@
 #define DEFAULT_CONSOLE Serial
 #endif
 
+// Assume DEFAULT_CONSOLE lives at pin 0 (Arduino headers don't have
+// any way of finding out). Might be undef'd or redefined below.
+#define DEFAULT_OUTPIN 0
+
 // Enable Software Serial tx support for Arduino
 // this enables "setbaud(4, 4800); print #4:..."
 // at a cost of about 400 bytes (for tx only)
@@ -129,6 +133,7 @@
 // Sanguino alternate hardware serial port tx output is on pin 11 (rx on 10)
 #define SANGUINO_DEFAULT_SERIAL 9
 #define SANGUINO_ALTERNATE_SERIAL 11
+#undef DEFAULT_OUTPIN
 #define DEFAULT_OUTPIN SANGUINO_DEFAULT_SERIAL
 #define ALTERNATE_OUTPIN SANGUINO_ALTERNATE_SERIAL
 
@@ -158,6 +163,7 @@
 //
 #define MEGA_DEFAULT_SERIAL 1
 #define MEGA_ALTERNATE_SERIAL 18
+#undef DEFAULT_OUTPIN
 #define DEFAULT_OUTPIN MEGA_DEFAULT_SERIAL
 #define ALTERNATE_OUTPIN MEGA_ALTERNATE_SERIAL
 
@@ -201,6 +207,8 @@
 #define MINIMUM_FREE_RAM 20
 #define NUMPINS 24
 #undef SOFTWARE_SERIAL_TX
+// Serial is virtual (USB), so no corresponding pin
+#undef DEFAULT_OUTPIN
 #endif	// defined AVRO
 
 #define TEENSY
@@ -221,6 +229,8 @@
 #define MINIMUM_FREE_RAM 50
 #define NUMPINS 40
 #undef SOFTWARE_SERIAL_TX
+// Serial is virtual (USB), so no corresponding pin
+#undef DEFAULT_OUTPIN
 #endif	// AVRO
 
 #define TEENSY2

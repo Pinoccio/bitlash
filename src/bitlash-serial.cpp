@@ -39,11 +39,6 @@
 // Character io primitives
 //#define spb serialWrite
 
-// The default default outpin is, of course, zero
-#ifndef DEFAULT_OUTPIN
-#define DEFAULT_OUTPIN 0
-#endif
-
 #ifdef SOFTWARE_SERIAL_TX
 
 #define DEFAULT_SECONDARY_BAUD 9600L
@@ -94,10 +89,13 @@ void chkpin(char pin) {
 numvar setBaud(numvar pin, unumvar baud) {
 	chkpin(pin);
 
+#ifdef DEFAULT_OUTPIN
 	if (pin == DEFAULT_OUTPIN) {
 		DEFAULT_CONSOLE.begin(baud);
 		return 0;
 	}
+#endif
+
 #ifdef ALTERNATE_OUTPIN
 	else if (pin == ALTERNATE_OUTPIN) {
 		Serial1.begin(baud);
@@ -115,10 +113,12 @@ numvar setBaud(numvar pin, unumvar baud) {
 void setOutput(byte pin) {
 	chkpin(pin);
 
+#ifdef DEFAULT_OUTPIN
 	if (pin == DEFAULT_OUTPIN) {
 		blout = blconsole;
 		return;
 	}
+#endif
 
 #ifdef ALTERNATE_OUTPIN
 	if (pin == ALTERNATE_OUTPIN) {
