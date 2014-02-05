@@ -36,12 +36,10 @@
 #ifndef _BITLASH_H
 #define _BITLASH_H
 
-#if defined(ARDUINO)		// this detects the Arduino build environment
 // On newer gcc versions, this enabled the prog_char etc. types
 #define __PROG_TYPES_COMPAT__
 
 #include "Arduino.h"
-#endif // HIGH || ARDUINO
 
 #if !defined(UNIX_BUILD)
 #if defined(__SAM3X8E__)
@@ -108,9 +106,6 @@
 
 #define MINIMUM_FREE_RAM 50
 
-#else
-#define HIGH 1
-#define LOW 0
 #endif // Arduino build
 
 
@@ -250,7 +245,6 @@
 ///////////////////////////////////////////////////////
 //
 //	Unix build options
-//	(not working)
 //
 //	See README-UNIX.md for info about how to compile
 //
@@ -258,26 +252,11 @@
 #define MINIMUM_FREE_RAM 200
 #define NUMPINS 32
 #undef SOFTWARE_SERIAL_TX
-#define beginSerial(x)
-
 #define E2END 2047
 
-#define byte uint8_t
-#define uint8_t unsigned char
-#define uint32_t unsigned long int
-#define prog_char char
-#define prog_uchar unsigned char
-#define strncpy_P strncpy
-#define strcmp_P strcmp
-#define strlen_P strlen
-
-#define PROGMEM
-#define OUTPUT 1
-
-#define pgm_read_byte(addr) (*(char*) (addr))
-#define pgm_read_word(addr) (*(int *) (addr))
-
-unsigned long millis(void);
+#define DEFAULT_CONSOLE StdioStream
+// No corresponding pin
+#undef DEFAULT_OUTPIN
 
 #endif	// defined unix_build
 
@@ -678,24 +657,6 @@ numvar sdcd(void);
 numvar sdmd(void);
 numvar func_pwd(void);
 #endif
-
-/////////////////////////////////////////////
-// bitlash-unix.c
-//
-#if defined(UNIX_BUILD)
-int serialAvailable(void);
-int serialRead(void);
-void digitalWrite(uint8_t, uint8_t);
-int digitalRead(uint8_t);
-int analogRead(uint8_t);
-void analogWrite(byte, int);
-void pinMode(uint8_t, uint8_t);
-int pulseIn(int, int, int);
-unsigned long millis(void);
-void delay(unsigned long);
-void delayMicroseconds(unsigned int);
-#endif
-
 
 // Strings live in PROGMEM to save ram
 //
