@@ -51,6 +51,9 @@
 //	Start Bitlash, and give it cycles to do stuff
 //
 void initBitlash(unsigned long baud);	// start up and set baud rate
+#ifndef DEFAULT_CONSOLE_ONLY
+void initBitlash(Stream& stream);
+#endif
 void runBitlash(void);					// call this in loop(), frequently
 
 // Bitlash variables are of type "numvar"
