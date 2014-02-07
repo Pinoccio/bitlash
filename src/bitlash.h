@@ -458,31 +458,21 @@ void cmd_print(void);
 #endif
 numvar func_printf_handler(byte, byte);
 
-// Below, various pointers are defined that tell the code where to read
-// data from and print to.
-// The actual definitions are fairly complex to help the compiler
-// optimize the code when some features are disabled, but the basic
-// function of these variables is:
-//
-// blconsole:
-//   The Stream where input is read from and print writes to
-//   when there is not output handler set.
-// bloutdefault:
-//   The Print object where the print command normally goes (e.g. when not
-//   redirected with print #10: "foo")
-// blout:
-//   The Print object where the print command goes right now
 
+// The Stream where input is read from and print writes to when there is
+// not output handler set.
 #ifndef DEFAULT_CONSOLE_ONLY
 extern Stream *blconsole;
 #else
-// Console is fixed to DEFAULT_CONSOLE, so make bsconsole a unchangeable
+// Console is fixed to DEFAULT_CONSOLE, so make blconsole a unchangeable
 // pointer to DEFAULT_CONSOLE. By also copying the type of
 // DEFAULT_CONSOLE, the compiler can optimize away all vtable operations
 // for minimal code overhead
 __typeof__(DEFAULT_CONSOLE) * const blconsole = &DEFAULT_CONSOLE;
 #endif
 
+// The Print object where the print command normally goes (e.g. when not
+// redirected with print #10: "foo")
 #ifdef SERIAL_OVERRIDE
 extern Print *bloutdefault;
 #else
@@ -492,6 +482,7 @@ extern Print *bloutdefault;
 #define bloutdefault blconsole
 #endif
 
+// The Print object where the print command goes right now
 #ifdef SOFTWARE_SERIAL_TX
 extern Print *blout;
 #else

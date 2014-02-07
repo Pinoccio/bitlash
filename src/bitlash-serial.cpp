@@ -87,7 +87,7 @@ public:
 
 uint16_t SoftwareSerialTX::bittime[];
 
-SoftwareSerialTX sstx;
+static SoftwareSerialTX sstx;
 
 void chkpin(char pin) {
 	// TODO: fix this warning re: comparison
@@ -123,7 +123,7 @@ void setOutput(byte pin) {
 
 #ifdef DEFAULT_OUTPIN
 	if (pin == DEFAULT_OUTPIN) {
-		blout = blconsole;
+		blout = &DEFAULT_CONSOLE;
 		return;
 	}
 #endif
@@ -158,19 +158,19 @@ public:
 	virtual size_t write(uint8_t c) { func (c); return 1; }
 };
 
-PrintToFunction overrideTarget;
+static PrintToFunction outputHandlerPrint;
 
 byte serialIsOverridden(void) {
 	return bloutdefault != blconsole;
 }
 
 void setOutputHandler(serialOutputFunc newHandler) {
-	overrideTarget.func = newHandler;
-	blout = bloutdefault = &overrideTarget;
+	outputHandlerPrint.func = newHandler;
+	blout = bloutdefault = &outputHandlerPrint;
 }
 
-void setOutputHandler(Print& newHandler) {
-	blout = bloutdefault = &newHandler;
+void setOutputHandler(Print& print) {
+	blout = bloutdefault = &print;
 }
 
 void resetOutputHandler(void) {
