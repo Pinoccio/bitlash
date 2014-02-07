@@ -10,7 +10,7 @@ PREFIX := /usr/local
 BINPATH := $(PREFIX)/bin
 
 all:
-	gcc -DUNIX_BUILD $(LDFLAGS) $(CFLAGS) $(SOURCES) -o $(BINARY)
+	gcc $(LDFLAGS) $(CFLAGS) $(SOURCES) -o $(BINARY)
 
 install:
 	sudo cp $(BINARY) $(BINPATH)
