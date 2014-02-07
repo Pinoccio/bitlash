@@ -311,17 +311,6 @@ typedef unsigned int unumvar;
 #endif		// arduino_build
 
 
-#ifdef AVROPENDOUS_BUILD
-// USB integration
-uint8_t usbAvailable(void);
-int usbRead(void);
-void usbWrite(uint8_t);
-void usbMouseOn(void);
-void usbMouseOff(void);
-void connectBitlash(void);
-#endif	// avropendous
-
-
 // Function prototypes
 
 
