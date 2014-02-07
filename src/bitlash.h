@@ -36,10 +36,23 @@
 #ifndef _BITLASH_H
 #define _BITLASH_H
 
-// On newer gcc versions, this enabled the prog_char etc. types
+// Uncomment this to set Arduino version if < 18:
+// Versions below 12 are not supported
+//#define ARDUINO 15
+
+// On newer gcc versions, this enables the prog_char etc. types
+// (needs to be defined for including avr/pgmspace.h or Arduino.h)
 #define __PROG_TYPES_COMPAT__
 
-#include "Arduino.h"
+#if !defined(ARDUINO) && !defined(UNIX_BUILD)
+	#error "Building is only supported through Arduino and src/Makefile. If you have an Arduino version older than 018 which does not define the ARDUINO variable, manually set your Arduino version in src/bitlash.h"
+#endif
+
+#if defined(ARDUINO) && ARDUINO < 100
+	#include "WProgram.h"
+#else
+	#include "Arduino.h"
+#endif
 
 #if !defined(UNIX_BUILD)
 #if defined(__SAM3X8E__)
@@ -55,6 +68,13 @@
 #include <string.h>
 #include <ctype.h>
 #include <setjmp.h>
+#include <avr/pgmspace.h>
+
+#if defined(ARDUINO) && ARDUINO < 19
+// Arduino < 019 does not have the Stream class, so don't support
+// passing a different Stream object to initBitlash
+#define DEFAULT_CONSOLE_ONLY
+#endif
 
 ////////////////////////////////////////////////////
 // GLOBAL BUILD OPTIONS
