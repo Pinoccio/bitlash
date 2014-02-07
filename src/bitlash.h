@@ -36,10 +36,20 @@
 #ifndef _BITLASH_H
 #define _BITLASH_H
 
-// On newer gcc versions, this enabled the prog_char etc. types
-#define __PROG_TYPES_COMPAT__
+// Uncomment this to set Arduino version if < 18:
+//#define ARDUINO 15
 
-#include "Arduino.h"
+#if !defined(ARDUINO) && !defined(UNIX_BUILD)
+#error "Building is only supported through Arduino and src/Makefile. If you have an Arduino version older than 018 which does not define the ARDUINO variable, manually set your Arduino version in src/bitlash.h"
+#endif
+
+#if defined(ARDUINO) && ARDUINO < 100
+	#include "WProgram.h"
+#else
+	#include "Arduino.h"
+	#define prog_char char PROGMEM
+	#define prog_uchar char PROGMEM
+#endif
 
 #if !defined(UNIX_BUILD)
 #if defined(__SAM3X8E__)
@@ -53,6 +63,11 @@
 #define AVR_BUILD 1
 #endif
 #endif // !defined(UNIX_BUILD)
+
+
+#if defined(AVR_BUILD)
+#include "avr/pgmspace.h"
+#endif
 
 #include <string.h>
 #include <ctype.h>
@@ -72,7 +87,7 @@
 //#define PARSER_TRACE 1
 
 // Define this to disable the initBitlash(Stream*) function and have the
-// console I/O fixed to DEFAULT_CONSOLE.
+// console I/O fixed to DEFAULT_CONSOLE (saves program memory)
 //#define DEFAULT_CONSOLE_ONLY
 
 
@@ -83,8 +98,6 @@
 ////////////////////////////////////////////////////
 //
 #if defined(ARDUINO)		// this detects the Arduino build environment
-
-#define ARDUINO_BUILD 1
 
 #ifdef SERIAL_PORT_MONITOR
 #define DEFAULT_CONSOLE SERIAL_PORT_MONITOR
@@ -106,8 +119,13 @@
 
 #define MINIMUM_FREE_RAM 50
 
-#endif // Arduino build
+#endif // defined(ARDUINO)
 
+// Arduino < 019 does not have the Stream class, so don't support
+// passing a different Stream object to initBitlash
+#if defined(ARDUINO) && ARDUINO < 19
+#define DEFAULT_CONSOLE_ONLY
+#endif
 
 ///////////////////////////////////////////////////////
 //
@@ -284,7 +302,7 @@
 
 
 // numvar is 32 bits on Arduino and 16 bits elsewhere
-#if (defined(ARDUINO_BUILD) || defined(UNIX_BUILD)) && !defined(TINY_BUILD)
+#if (defined(ARDUINO) || defined(UNIX_BUILD)) && !defined(TINY_BUILD)
 typedef long int numvar;
 typedef unsigned long int unumvar;
 #else
@@ -452,7 +470,7 @@ void resetOutputHandler(void);
 extern serialOutputFunc serial_override_handler;
 #endif
 
-#ifdef ARDUINO_BUILD
+#ifdef ARDUINO
 void chkbreak(void);
 void cmd_print(void);
 #endif

@@ -65,7 +65,11 @@ public:
 	static uint16_t bittime[NUMPINS]; // bit times (1000000/baud) per pin, 0 = uninitialized
 
 	// bit whack a byte out the port designated by 'outpin'
+#if defined(ARDUINO) && ARDUINO < 100
+	virtual void write(uint8_t c) {
+#else
 	virtual size_t write(uint8_t c) {
+#endif
 		const uint16_t bt = bittime[this->pin];
 		char bits = 8; // 8 data bits
 		digitalWrite(this->pin, LOW);
@@ -79,7 +83,9 @@ public:
 		}
 		digitalWrite(this->pin, HIGH);
 		delayMicroseconds(bt<<1);
+#if !(defined(ARDUINO) && ARDUINO < 100)
 		return 1;
+#endif
 	}
 
 
@@ -155,7 +161,18 @@ serialOutputFunc serial_override_handler;
 class PrintToFunction : public Print {
 public:
 	serialOutputFunc func;
-	virtual size_t write(uint8_t c) { func (c); return 1; }
+
+#if defined(ARDUINO) && ARDUINO < 100
+	virtual void write(uint8_t c)
+#else
+	virtual size_t write(uint8_t c)
+#endif
+	{
+		func (c);
+#if !(defined(ARDUINO) && ARDUINO < 100)
+		return 1;
+#endif
+	}
 };
 
 static PrintToFunction outputHandlerPrint;
@@ -246,8 +263,15 @@ void chkbreak(void) {
 
 // check serial input stream for ^C break
 void chkbreak(void) {
-	if (blconsole->peek() == 3) { // allow ^C to break out
+	// allow ^C to break out
+#if defined(ARDUINO) && ARDUINO < 100
+	// Arduino before 1.0 didn't have peek(), so just read a
+	// byte (this discards a byte when it wasn't ^C, though...
+	if (blconsole->read() == 3) {
+#else
+	if (blconsole->peek() == 3) {
 		blconsole->read();
+#endif
 		msgpl(M_ctrlc);
 		longjmp(env, X_EXIT);
 	}
