@@ -454,7 +454,7 @@ void resetOutput(void);
 typedef void (*serialOutputFunc)(byte);
 byte serialIsOverridden(void);
 void setOutputHandler(serialOutputFunc);
-void setOutputHandler(Print& newHandler);
+void setOutputHandler(Print&);
 void resetOutputHandler(void);
 extern serialOutputFunc serial_override_handler;
 #endif
