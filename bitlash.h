@@ -99,6 +99,7 @@ numvar getstringarg(numvar which);
 typedef void (*serialOutputFunc)(byte);
 byte serialIsOverridden(void);
 void setOutputHandler(serialOutputFunc);
+void setOutputHandler(Print& newHandler);
 void setOutput(byte pin);
 void resetOutputHandler(void);
 numvar func_printf_handler(byte, byte);
