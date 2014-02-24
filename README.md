@@ -2,6 +2,8 @@
 
 Questions / Bug Reports / Pull Requests welcome!  https://github.com/billroy/bitlash/issues
 
+This repository contains the Pinoccio-specific version of bitlash, see https://github.com/Pinoccio/library-bitlash
+
 ## March 19, 2013: Type checking for string arguments
 
 Bitlash supports string constants in function argument lists, but until now there hasn't been a way to distinguish such string arguments from numeric arguments once you're inside the called function, making it easy to reference forbidden memory by mistake.
