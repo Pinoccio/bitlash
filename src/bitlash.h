@@ -92,7 +92,7 @@
 //
 // Enable PARSER_TRACE to make ^T toggle a parser trace debug print stream
 // cost: ~400 bytes flash
-//#define PARSER_TRACE 1
+#define PARSER_TRACE 1
 
 
 
@@ -497,7 +497,7 @@ void initlbuf(void);
 
 // String value buffer size
 #ifdef AVR_BUILD
-  #define STRVALSIZE 120
+  #define STRVALSIZE 512
 #else
   #define STRVALSIZE 512
 #endif
@@ -543,7 +543,8 @@ void eeputs(int);
 	#define ENDDB 4095
 	#define ENDEEPROM 4095
 #else
-	#define ENDDB E2END
+	#define PCONFIGLENGTH 256
+	#define ENDDB (E2END - PCONFIGLENGTH) // we want remaining  bytes saved for Pinoccio-specific settings
 	#define ENDEEPROM E2END
 #endif
 
@@ -592,6 +593,21 @@ void printHex(unumvar);
 void printBinary(unumvar);
 void spb(char c);
 void sp(const char *);
+void sp(const String &);
+void sp(char);
+void sp(unsigned char);
+void sp(int);
+void sp(unsigned int);
+void sp(long);
+void sp(unsigned long);
+void speol(const char *);
+void speol(const String &);
+void speol(char);
+void speol(unsigned char);
+void speol(int);
+void speol(unsigned int);
+void speol(long);
+void speol(unsigned long);
 void speol(void);
 
 numvar func_printf(void); 
@@ -742,7 +758,7 @@ extern byte exptype;				// type of expression: s_nval [or s_sval]
 extern numvar expval;				// value of numeric expr or length of string
 
 // Temporary buffer for ids
-#define IDLEN 12
+#define IDLEN 24
 extern char idbuf[IDLEN+1];
 
 

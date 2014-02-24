@@ -35,6 +35,8 @@
 ***/
 #include "bitlash.h"
 
+#include "avr/wdt.h"
+
 
 // Turn HEX_UPLOAD on to enable the hex file EEPROM uploader
 // It costs 78 bytes of flash
@@ -64,9 +66,9 @@ void nukeeeprom(void) {
 
 #if defined(AVR_BUILD)
 void cmd_boot(void) {
-	// This is recommended but does not work on Arduino
-	// Reset_AVR();
-	void (*bootvec)(void) = 0; (*bootvec)(); 	// we jump through 0 instead
+	cli();
+	wdt_enable(WDTO_15MS);
+	while(1);
 }
 #elif defined(ARM_BUILD)
 

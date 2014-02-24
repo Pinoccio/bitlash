@@ -114,5 +114,7 @@ const prog_char *wordlist = builtin_table;
 void displayBanner(void) {
 	// print the banner and copyright notice
 	// please note the license requires that you maintain this notice
-	execscript(SCRIPT_PROGMEM, (numvar) (builtin_table + strlen(builtin_table)+1), 0);
+	// TODO: This uses global memory, should use PROGMEM instead (or       
+	// possibly be solved differently altogether).                         
+	doCommand("banner");
 }

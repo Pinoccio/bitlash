@@ -84,8 +84,9 @@
 #elif (defined(AVR_BUILD)) || ( (defined(ARM_BUILD)) && (ARM_BUILD==2))
 	// AVR or Teensy 3
 	#include "avr/eeprom.h"
-	void eewrite(int addr, uint8_t value) { eeprom_write_byte((unsigned char *) addr, value); }
-	uint8_t eeread(int addr) { return eeprom_read_byte((unsigned char *) addr); }
+	void eewrite(int addr, uint8_t value) { if ((addr >= 0) && (addr < ENDDB)) eeprom_write_byte((unsigned char *) addr, value); }
+	uint8_t eeread(int addr) { if ((addr >= 0) && (addr < ENDDB)) return eeprom_read_byte((unsigned char *) addr); else return 255; }
+
 	#if defined(ARM_BUILD)
 		// Initialize Teensy 3 eeprom
 		void eeinit(void) { eeprom_initialize(); }
@@ -99,7 +100,7 @@
 			for (int i=0; i<E2END; i++) virtual_eeprom[i] = 255;
 		}
 
-		void eewrite(int addr, uint8_t value) { virtual_eeprom[addr] = value; }
-		uint8_t eeread(int addr) { return virtual_eeprom[addr]; }
+		void eewrite(int addr, uint8_t value) { if (addr < E2END) virtual_eeprom[addr] = value; }
+		uint8_t eeread(int addr) { if (addr < E2END) return virtual_eeprom[addr]; else return 255; }
 	#endif
 #endif
