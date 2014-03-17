@@ -172,8 +172,8 @@ void spb(char c) {
 }
 void sp(const char *str) { while (*str) spb(*str++); }
 void sp(const String &str) { char buf[str.length()+1]; str.toCharArray(buf, str.length()+1); sp(buf); }
-void sp(char str) { spb(str); }
-void sp(unsigned char str) { spb((char)str); }
+void sp(char str) { sp(String(str)); }
+void sp(unsigned char str) { sp((String)str); }
 void sp(int str) { sp(String(str)); }
 void sp(unsigned int str) { sp(String(str)); }
 void sp(long str) { sp(String(str)); }
