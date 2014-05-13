@@ -88,6 +88,7 @@ int getValue(char *key);			// return location of macro value in EEPROM or -1
 //
 typedef numvar (*bitlash_function)(void);
 void addBitlashFunction(const char *, bitlash_function);
+char find_user_function(char *id);
 numvar getarg(numvar);
 numvar isstringarg(numvar);
 numvar getstringarg(numvar which);
