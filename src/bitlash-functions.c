@@ -391,16 +391,19 @@ const bitlash_function function_table[] PROGMEM = {
 #endif
 
 #ifdef USER_FUNCTIONS
-#define MAX_USER_FUNCTIONS 150		// increase this if needed, but keep free() > 200 ish
+#define MAX_USER_FUNCTIONS 512
 #define USER_FUNCTION_FLAG 0x80
+#define USER_FUNCTION_DEPTH 8
 
 typedef struct {
 	const char *name;					// pointer to the name
 	bitlash_function func_ptr;	// pointer to the implementing function
 } user_functab_entry;
 
-byte bf_install_count;			// number of installed functions
+uint16_t bf_install_count;			// number of installed functions
 user_functab_entry user_functions[MAX_USER_FUNCTIONS];		// the table
+uint8_t bf_install_depth = 0;			// last used stack entry
+user_functab_entry user_functions_stack[USER_FUNCTION_DEPTH];		// for stack references
 
 
 //////////
@@ -443,9 +446,13 @@ void addBitlashFunction(const char *name, bitlash_function func_ptr) {
 //
 char find_user_function(char *id) {
 	symval = 0;
-	while (symval < bf_install_count) {
-		if (!strcmp(id, user_functions[symval].name)) {
+	uint16_t i;
+	for (i=0; i < bf_install_count; i++) {
+		if (!strcmp(id, user_functions[i].name)) {
+			user_functions_stack[bf_install_depth] = user_functions[i]; // store an easily reference-able copy
+			symval = bf_install_depth++;
 			symval |= USER_FUNCTION_FLAG;
+			if(bf_install_depth == USER_FUNCTION_DEPTH) bf_install_depth = 0; // loop around
 			return 1;
 		}
 		symval++;
@@ -458,7 +465,7 @@ char find_user_function(char *id) {
 // show_user_functions: display a list of registered user functions
 //
 void show_user_functions(void) {
-byte i;
+	uint16_t i;
 	for (i=0; i < bf_install_count; i++) {
 		sp(user_functions[i].name);
 		spb(' ');
@@ -482,7 +489,7 @@ bitlash_function fp;
 	// Detect and handle a user function: its id has the high bit set
 	// we set nargs and fp and fall through to masquerade as a built-in
 	if (entry & USER_FUNCTION_FLAG) {
-		fp = (bitlash_function) user_functions[entry & 0x7f].func_ptr;
+		fp = (bitlash_function) user_functions_stack[entry & 0x7f].func_ptr;
 	}
 	else
 #endif
