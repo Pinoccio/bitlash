@@ -108,7 +108,11 @@ numvar execscript(byte scripttype, numvar scriptaddress, char *scriptname) {
 				//
 				// -br
 				//
-				initTaskList();		// stop all pending tasks
+				// Changed for pinoccio: Don't stop all tasks on an error, but only if an error
+				// occurs in a background task, stop just that one.
+				if (background)
+					stopTask(curtask); 
+				//initTaskList();		// stop all pending tasks
 
 #ifdef SOFTWARE_SERIAL_TX
 				resetOutput();		// clean up print module
